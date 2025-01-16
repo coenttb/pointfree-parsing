@@ -1,4 +1,4 @@
-// swift-tools-version:5.9
+// swift-tools-version:6.0
 
 import PackageDescription
 
@@ -6,7 +6,7 @@ let package = Package(
   name: "swift-parsing",
   platforms: [
     .iOS(.v13),
-    .macOS(.v10_15),
+    .macOS(.v14),
     .tvOS(.v13),
     .watchOS(.v6),
   ],
@@ -39,5 +39,6 @@ let package = Package(
         .product(name: "Benchmark", package: "swift-benchmark"),
       ]
     ),
-  ]
+  ],
+  swiftLanguageModes: [.v5]
 )
