@@ -283,12 +283,16 @@ where P0: ParserPrinter, P1: ParserPrinter {
     _ output: (repeat each Elements, P1.Output),
     into input: inout P0.Input
   ) rethrows {
-//    FAILS WITH: Value pack expansion can only appear inside a function argument list, tuple element, or as the expression of a for-in loop
-//    try self.p1.print(output.1, into: &input)
-//    try self.p0.print(output.0, into: &input)
+    //    (1) FAILS WITH: Value pack expansion can only appear inside a function argument list, tuple element, or as the expression of a for-in loop
+    //    try self.p1.print(output.1, into: &input)
+    //    try self.p0.print(output.0, into: &input)
+    
+    
+    //    (2) DOESNT COMPILE, error: Command SwiftCompile failed with a nonzero exit code
+    //    try self.p1.print(output.1, into: &input)
+    
   }
 }
-
 
 func flatten<each T, U>(_ nested: ((repeat each T), U)) -> (repeat each T, U) {
   let (first, second) = nested
