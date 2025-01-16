@@ -236,7 +236,11 @@ extension ParserBuilder where Input == Substring.UTF8View {
 
 extension ParserBuilder {
   public struct TupleParser<P0: Parser, P1: Parser, each Elements>: Parser
-  where P0.Input == P1.Input, P0.Output == (repeat each Elements) {
+  where
+  P0.Input == P1.Input,
+  // P0 produces `(repeat each Elements)`:
+  P0.Output == (repeat each Elements)
+  {
     @usableFromInline let p0: P0
     @usableFromInline let p1: P1
     
@@ -245,17 +249,23 @@ extension ParserBuilder {
       self.p1 = p1
     }
     
-    @inlinable public func parse(_ input: inout P0.Input) rethrows -> (repeat each Elements, P1.Output) {
+    @inlinable
+    public func parse(_ input: inout P0.Input) rethrows -> (repeat each Elements, P1.Output) {
       do {
+        // p0 returns `(repeat each Elements)`
         let first = try self.p0.parse(&input)
+        // p1 returns `P1.Output`
         let second = try self.p1.parse(&input)
+        // Flatten them into a single 2-part tuple:
         return (repeat each first, second)
       } catch {
         throw ParsingError.wrap(error, at: input)
       }
     }
   }
-  
+}
+
+extension ParserBuilder {
   @_disfavoredOverload
   public static func buildPartialBlock<P0: Parser, P1: Parser, each Elements>(
     accumulated: P0,
@@ -268,9 +278,20 @@ extension ParserBuilder {
 
 extension ParserBuilder.TupleParser: ParserPrinter
 where P0: ParserPrinter, P1: ParserPrinter {
-  @inlinable public func print(_ output: (repeat each Elements, P1.Output), into input: inout P0.Input) throws {
-    //    The following doesn't compile with error: 'Value pack expansion can only appear inside a function argument list, tuple element, or as the expression of a for-in loop'
-    //    try p1.print(output.1, into: &input)
-    //    try p0.print((repeat each output.0), into: &input)
+  @inlinable
+  public func print(
+    _ output: (repeat each Elements, P1.Output),
+    into input: inout P0.Input
+  ) rethrows {
+//    FAILS WITH: Value pack expansion can only appear inside a function argument list, tuple element, or as the expression of a for-in loop
+//    try self.p1.print(output.1, into: &input)
+//    try self.p0.print(output.0, into: &input)
   }
 }
+
+
+func flatten<each T, U>(_ nested: ((repeat each T), U)) -> (repeat each T, U) {
+  let (first, second) = nested
+  return (repeat each first, second)
+}
+
