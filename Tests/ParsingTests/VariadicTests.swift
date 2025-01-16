@@ -2,7 +2,25 @@ import Parsing
 import XCTest
 
 final class NParsingTests: XCTestCase {
-  func testParsing11() throws {
+  func test2Parsing() throws {
+    struct ParserTest: Parser {
+      var body: some Parser<Substring, (Int, Int)>
+      {
+        Digits()
+        "."
+        Digits()
+        "."
+      }
+    }
+    
+    var input = "1.2."[...]
+    let output: (Int, Int) = try ParserTest()
+      .parse(&input)
+    XCTAssertEqual(output.0, 1)
+    XCTAssertEqual(output.1, 2)
+  }
+  
+  func test11Parsing() throws {
     struct ParserTest: Parser {
       var body: some Parser<Substring, (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int)>
       {

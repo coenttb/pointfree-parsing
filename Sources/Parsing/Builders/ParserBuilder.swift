@@ -269,7 +269,8 @@ extension ParserBuilder {
 extension ParserBuilder.TupleParser: ParserPrinter
 where P0: ParserPrinter, P1: ParserPrinter {
   @inlinable public func print(_ output: (repeat each Elements, P1.Output), into input: inout P0.Input) throws {
-//    try p1.print(output.1, into: &input)
-//    try p0.print((repeat each output.0), into: &input)
+    //    The following doesn't compile with error: 'Value pack expansion can only appear inside a function argument list, tuple element, or as the expression of a for-in loop'
+    //    try p1.print(output.1, into: &input)
+    //    try p0.print((repeat each output.0), into: &input)
   }
 }
